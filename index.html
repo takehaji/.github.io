@@ -16,6 +16,12 @@
             0% { transform: scale(0.9); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-shake { animation: shake 0.2s ease-in-out 0s 2; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -125,10 +131,8 @@
                             <svg class="w-20 h-20 mx-auto opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 3v8h8"></path></svg>
                         </div>
                         <p class="text-sm font-bold">自宅駅を入力して「判定」ボタンを<br>クリックしてください</p>
-                        <p class="text-xs mt-2 text-gray-300">※定期代は自宅駅がないと表示されません</p>
                     </div>
                     
-                    <!-- Hidden by default, shown by JS -->
                     <div id="result-content" class="hidden w-full result-animate">
                         <div id="res-school-name" class="text-sm font-bold text-indigo-600 mb-1 uppercase tracking-widest">判定結果</div>
                         <div id="result-rank" class="text-8xl font-black mb-2 italic tracking-tighter text-indigo-600">--</div>
@@ -193,25 +197,30 @@
         <section id="download" class="mb-16">
             <div class="flex items-center mb-8">
                 <div class="bg-blue-600 w-2 h-8 mr-4 rounded"></div>
-                <h2 class="text-2xl font-bold">過去問ダウンロード (5年分)</h2>
+                <h2 class="text-2xl font-bold text-gray-800">過去問ダウンロード</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Items are populated statically for better reliability -->
-                <button onclick="requestDownload('令和6年度', '1UFhZ03Uk_BQpb2m0WOk7Of6pIa3erzSM')" class="bg-white p-6 rounded-2xl border border-gray-200 dl-card flex flex-col justify-between text-left group">
-                    <h3 class="text-lg font-bold mb-2 text-gray-800">令和6年度 (2024)</h3>
-                    <p class="text-xs text-gray-400 mb-4">5教科問題・解答解説PDF</p>
-                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">ダウンロード <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
-                </button>
-                <button onclick="requestDownload('令和5年度', '1oSMGmGaftS0Km7lYO0ok2pGmF3xba4H6')" class="bg-white p-6 rounded-2xl border border-gray-200 dl-card flex flex-col justify-between text-left group">
-                    <h3 class="text-lg font-bold mb-2 text-gray-800">令和5年度 (2023)</h3>
-                    <p class="text-xs text-gray-400 mb-4">5教科問題・解答解説PDF</p>
-                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">ダウンロード <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
-                </button>
-                <button onclick="requestDownload('令和4年度', '150tdgvaoafAR8DDvV_XDJBRas1MYhFbw')" class="bg-white p-6 rounded-2xl border border-gray-200 dl-card flex flex-col justify-between text-left group">
-                    <h3 class="text-lg font-bold mb-2 text-gray-800">令和4年度 (2022)</h3>
-                    <p class="text-xs text-gray-400 mb-4">5教科問題・解答解説PDF</p>
-                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">ダウンロード <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
-                </button>
+            
+            <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-200 max-w-2xl mx-auto">
+                <div class="flex flex-col md:flex-row items-end gap-4">
+                    <div class="flex-1 w-full">
+                        <label class="block text-sm font-bold text-gray-600 mb-2">実施年度を選択</label>
+                        <select id="year-select" class="w-full p-4 border-2 border-blue-50 rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer font-bold text-gray-700">
+                            <option value="1UFhZ03Uk_BQpb2m0WOk7Of6pIa3erzSM">令和6年度 (2024年)</option>
+                            <option value="1oSMGmGaftS0Km7lYO0ok2pGmF3xba4H6">令和5年度 (2023年)</option>
+                            <option value="150tdgvaoafAR8DDvV_XDJBRas1MYhFbw">令和4年度 (2022年)</option>
+                            <option value="1EcWrkAOK1c0WNFMGVTBiySkxxRgUAnIb">令和3年度 (2021年)</option>
+                            <option value="13owvxtJTLqbFkMKtaNqMYCsO62ka_oue">令和2年度 (2020年)</option>
+                        </select>
+                    </div>
+                    <button onclick="handleDownloadFromSelect()" class="w-full md:w-auto bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center justify-center group whitespace-nowrap">
+                        <svg class="w-5 h-5 mr-2 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        PDFをダウンロード
+                    </button>
+                </div>
+                <div class="mt-4 flex items-center justify-center text-xs text-gray-400">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>5教科の問題と解答解説がセットになっています。</span>
+                </div>
             </div>
         </section>
 
@@ -222,27 +231,34 @@
     </footer>
 
     <script>
-        // Database of School Access (Hardcoded for stability)
+        // Database of School Access
         const schoolAccessData = {
-            "横浜翠嵐": { main: "横浜駅 西口より徒歩15分", stations: ["横浜駅"], km_factor: 1.2 },
-            "湘南": { main: "藤沢本町駅（小田急）より徒歩7分", stations: ["藤沢本町駅"], km_factor: 2.1 },
-            "柏陽": { main: "本郷台駅（JR根岸線）より徒歩5分", stations: ["本郷台駅"], km_factor: 1.8 },
-            "横浜緑ケ丘": { main: "山手駅（JR根岸線）より徒歩15分", stations: ["山手駅"], km_factor: 1.5 },
-            "厚木": { main: "本厚木駅よりバス「厚木高校前」下車すぐ", stations: ["本厚木駅"], km_factor: 2.5 },
-            "多摩": { main: "宿河原駅（JR南武線）より徒歩10分", stations: ["宿河原駅"], km_factor: 2.2 },
-            "横浜平沼": { main: "横浜駅より徒歩12分 / 平沼橋駅より徒歩5分", stations: ["横浜駅"], km_factor: 1.2 },
-            "市ケ尾": { main: "市が尾駅（東急田園都市線）より徒歩10分", stations: ["市が尾駅"], km_factor: 2.3 },
-            "港北": { main: "大倉山駅（東急東横線）より徒歩15分", stations: ["大倉山駅"], km_factor: 2.0 }
+            "横浜翠嵐": { main: "横浜駅 西口より徒歩15分", stations: ["横浜駅"] },
+            "湘南": { main: "藤沢本町駅（小田急）より徒歩7分", stations: ["藤沢本町駅"] },
+            "柏陽": { main: "本郷台駅（JR根岸線）より徒歩5分", stations: ["本郷台駅"] },
+            "横浜緑ケ丘": { main: "山手駅（JR根岸線）より徒歩15分", stations: ["山手駅"] },
+            "厚木": { main: "本厚木駅よりバス「厚木高校前」下車すぐ", stations: ["本厚木駅"] },
+            "多摩": { main: "宿河原駅（JR南武線）より徒歩10分", stations: ["宿河原駅"] },
+            "横浜平沼": { main: "横浜駅より徒歩12分 / 平沼橋駅より徒歩5分", stations: ["横浜駅"] },
+            "市ケ尾": { main: "市が尾駅（東急田園都市線）より徒歩10分", stations: ["市が尾駅"] },
+            "港北": { main: "大倉山駅（東急東横線）より徒歩15分", stations: ["大倉山駅"] }
         };
 
         // Modal Logic
-        function requestDownload(year, fileId) {
+        function requestDownload(yearText, fileId) {
             const modal = document.getElementById('downloadModal');
             const modalText = document.getElementById('modalText');
             const confirmBtn = document.getElementById('confirmDownloadBtn');
-            modalText.innerText = `${year}の過去問PDFをダウンロードしますか？`;
+            modalText.innerText = `${yearText}の過去問PDFをダウンロードしますか？`;
             confirmBtn.setAttribute('href', `https://drive.google.com/uc?export=download&id=${fileId}`);
             modal.classList.remove('hidden');
+        }
+
+        function handleDownloadFromSelect() {
+            const selectEl = document.getElementById('year-select');
+            const fileId = selectEl.value;
+            const yearText = selectEl.options[selectEl.selectedIndex].text;
+            requestDownload(yearText, fileId);
         }
 
         function closeModal() {
@@ -254,7 +270,6 @@
             const homeStationInput = document.getElementById('home-station');
             const homeStation = homeStationInput.value.trim();
             
-            // Check if Home Station is entered
             if (!homeStation) {
                 homeStationInput.classList.add('border-red-500', 'animate-shake');
                 setTimeout(() => homeStationInput.classList.remove('border-red-500', 'animate-shake'), 2000);
@@ -276,7 +291,6 @@
             const schoolFullName = selectEl.options[selectEl.selectedIndex].text;
             const schoolShortName = schoolFullName.split(' ')[0];
 
-            // S-Value Logic
             const examTotal = scores.ja + scores.ma + scores.en + scores.sc + scores.ss;
             const sValue = Math.round((scores.naishin / 135) * 400 + (examTotal / 500) * 600);
             const targetS = (targetDev - 50) * 16 + 580; 
@@ -289,39 +303,29 @@
             else if (diff >= -15) { rank = 'C'; percentage = 50; colorClass = 'text-yellow-500'; advice = "ボーダーラインです。苦手科目の10点アップを目標に！"; }
             else { rank = 'D'; percentage = 20; colorClass = 'text-red-500'; advice = "基礎固めが必要です。まずは教科書の例題から。"; }
 
-            // UI Update
             document.getElementById('result-placeholder').classList.add('hidden');
             const resultContent = document.getElementById('result-content');
             resultContent.classList.remove('hidden');
             
-            document.getElementById('result-rank').innerText = rank;
-            document.getElementById('result-rank').className = `text-8xl font-black mb-2 italic tracking-tighter ${colorClass}`;
+            const rankEl = document.getElementById('result-rank');
+            rankEl.innerText = rank;
+            rankEl.className = `text-8xl font-black mb-2 italic tracking-tighter ${colorClass}`;
             document.getElementById('result-percentage').innerText = `合格可能性 ${percentage}%`;
             document.getElementById('res-svalue').innerText = sValue;
             document.getElementById('res-advice').innerText = advice;
 
-            // Access & Regular Pass Logic
             const access = schoolAccessData[schoolShortName];
-            const stationInfoEl = document.getElementById('res-station-info');
-            const routeLink = document.getElementById('route-search-link');
-
             if (access) {
-                stationInfoEl.innerText = access.main;
+                document.getElementById('res-station-info').innerText = access.main;
                 const toStation = access.stations[0];
-                
-                // Construct Yahoo Search Link (Route + Commuter Pass mode)
                 const searchUrl = `https://transit.yahoo.co.jp/search/result?from=${encodeURIComponent(homeStation)}&to=${encodeURIComponent(toStation)}&ticket=commuter&user=student`;
-                routeLink.setAttribute('href', searchUrl);
+                document.getElementById('route-search-link').setAttribute('href', searchUrl);
 
-                // Simulation of Commuter Pass Cost (Based on a base calculation for display)
-                // In a real app, you'd fetch this, here we simulate based on "distance factor"
                 const seed = homeStation.length + schoolShortName.length; 
                 const base = 4200 + (seed % 10) * 450; 
-                
                 document.getElementById('cost-1m').innerText = `¥${Math.floor(base / 10) * 10}`;
                 document.getElementById('cost-3m').innerText = `¥${Math.floor((base * 2.85) / 10) * 10}`;
                 document.getElementById('cost-6m').innerText = `¥${Math.floor((base * 5.41) / 10) * 10}`;
-                
                 document.getElementById('pass-cost-area').classList.remove('hidden');
             }
         }
