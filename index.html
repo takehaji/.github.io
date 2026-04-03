@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神奈川県立入試 突破戦略 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --kanagawa-blue: #1e3a8a;
+            --kanagawa-accent: #f59e0b;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s;
+        }
+        .card-shadow:hover {
+            transform: translateY(-4px);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        .modal-enter {
+            animation: modalFadeIn 0.2s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- ダウンロード確認用モーダル -->
+    <div id="downloadModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl modal-enter">
+            <div class="text-center">
+                <div class="bg-emerald-100 text-emerald-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">ダウンロードの確認</h3>
+                <p class="text-gray-500 text-sm mb-6">過去問PDFファイルをダウンロードします。よろしいですか？</p>
+                <div class="flex gap-3">
+                    <button onclick="closeDownloadModal()" class="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg font-bold hover:bg-gray-50 transition">キャンセル</button>
+                    <button id="confirmDownloadBtn" class="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg font-bold hover:bg-emerald-600 transition">ダウンロード</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ヘッダー -->
+    <header class="hero-gradient text-white pt-10 pb-24 px-6 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto">
+            <nav class="flex justify-between items-center mb-16">
+                <div class="text-2xl font-black tracking-tighter">KANAGAWA<span class="text-amber-400">NEXT</span></div>
+                <div class="hidden md:flex space-x-6 text-sm font-bold">
+                    <a href="#difficulty" class="hover:text-amber-300 transition">入試難易度</a>
+                    <a href="#strategy" class="hover:text-amber-300 transition">合格戦略</a>
+                    <a href="#subjects" class="hover:text-amber-300 transition">科目別対策</a>
+                    <a href="#practice" class="hover:text-amber-300 transition">過去問演習</a>
+                </div>
+            </nav>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="inline-block py-1 px-3 rounded-full bg-amber-500 text-xs font-bold mb-4 uppercase tracking-wider text-blue-900">2025年度入試対応</span>
+                    <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight">神奈川県立高校<br>合格を掴み取る。</h1>
+                    <p class="text-lg text-blue-100 mb-8 max-w-lg">
+                        内申・学力・特色。三位一体の攻略法をマスターし、志望校への最短ルートを駆け抜けよう。最新の偏差値データと傾向を完全網羅。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#practice" class="bg-white text-blue-900 px-8 py-3 rounded-lg font-bold hover:bg-amber-400 hover:text-blue-900 transition duration-300 shadow-lg">過去問に挑戦</a>
+                        <a href="#difficulty" class="bg-blue-800/40 text-white border border-white/30 px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300">難易度を確認</a>
+                    </div>
+                </div>
+
+                <!-- カウントダウン -->
+                <div class="bg-white/10 p-8 rounded-3xl border border-white/20 backdrop-blur-md">
+                    <p class="text-center text-sm font-bold tracking-widest mb-6 uppercase">共通選抜 学力検査まで</p>
+                    <div class="flex justify-around items-center" id="countdown">
+                        <div class="text-center">
+                            <span class="block text-5xl font-black" id="days">--</span>
+                            <span class="text-[10px] opacity-70 font-bold">DAYS</span>
+                        </div>
+                        <div class="text-3xl font-light opacity-50">:</div>
+                        <div class="text-center">
+                            <span class="block text-5xl font-black" id="hours">--</span>
+                            <span class="text-[10px] opacity-70 font-bold">HOURS</span>
+                        </div>
+                        <div class="text-3xl font-light opacity-50">:</div>
+                        <div class="text-center">
+                            <span class="block text-5xl font-black" id="minutes">--</span>
+                            <span class="text-[10px] opacity-70 font-bold">MINS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 -mt-12 mb-20">
+        
+        <!-- クイックメニュー -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+            <div class="bg-white p-6 rounded-2xl card-shadow border-t-4 border-blue-600">
+                <div class="text-blue-600 mb-4 uppercase text-xs font-black tracking-widest">Target Score</div>
+                <h3 class="text-xl font-bold mb-2">難易度リスト</h3>
+                <p class="text-sm text-gray-500 mb-4">県内主要校の合格目安偏差値をチェック。2025年度の最新予測を掲載しています。</p>
+                <a href="#difficulty" class="text-blue-600 font-bold text-sm inline-flex items-center">
+                    リストを見る <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </a>
+            </div>
+            <div class="bg-white p-6 rounded-2xl card-shadow border-t-4 border-amber-500">
+                <div class="text-amber-500 mb-4 uppercase text-xs font-black tracking-widest">Study Tips</div>
+                <h3 class="text-xl font-bold mb-2">科目別傾向分析</h3>
+                <p class="text-sm text-gray-500 mb-4">記述問題が増えている理科や、読解スピードが求められる英語の対策法を伝授。</p>
+                <a href="#subjects" class="text-amber-500 font-bold text-sm inline-flex items-center">
+                    対策を見る <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </a>
+            </div>
+            <div class="bg-white p-6 rounded-2xl card-shadow border-t-4 border-emerald-500">
+                <div class="text-emerald-500 mb-4 uppercase text-xs font-black tracking-widest">Download</div>
+                <h3 class="text-xl font-bold mb-2">過去問データを保存</h3>
+                <p class="text-sm text-gray-500 mb-4">試験本番形式のPDFファイルを保存。オフラインでの反復学習に活用してください。</p>
+                <button onclick="openDownloadModal('https://drive.google.com/uc?export=download&id=1UFhZ03Uk_BQpb2m0WOk7Of6pIa3erzSM')" class="text-emerald-500 font-bold text-sm inline-flex items-center hover:underline">
+                    ファイルを保存する <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 入試難易度セクション -->
+        <section id="difficulty" class="py-12 scroll-mt-20">
+            <div class="mb-10 text-center">
+                <h2 class="text-3xl font-black mb-3 text-slate-800 uppercase tracking-tight">Difficulty Analysis</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">県内主要校の合格目安偏差値と、過去5年間の入試傾向を徹底分析。</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- テーブル -->
+                <div class="lg:col-span-2 bg-white rounded-3xl p-8 card-shadow border border-slate-100">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        </span>
+                        最難関・上位校 難易度リスト (2025見込)
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest font-bold">
+                                    <th class="py-4 px-4 border-b">学校名</th>
+                                    <th class="py-4 px-4 border-b">地域</th>
+                                    <th class="py-4 px-4 border-b text-center">目安偏差値</th>
+                                    <th class="py-4 px-4 border-b">特徴</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-4 border-b font-bold text-blue-900">横浜翠嵐</td>
+                                    <td class="py-4 px-4 border-b text-slate-500">横浜</td>
+                                    <td class="py-4 px-4 border-b text-center"><span class="bg-blue-600 text-white px-2 py-1 rounded font-black">75</span></td>
+                                    <td class="py-4 px-4 border-b text-xs text-slate-600">県内不動のトップ。特色検査が極めて難解。</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-4 border-b font-bold text-blue-900">湘南</td>
+                                    <td class="py-4 px-4 border-b text-slate-500">湘南</td>
+                                    <td class="py-4 px-4 border-b text-center"><span class="bg-blue-500 text-white px-2 py-1 rounded font-black">74</span></td>
+                                    <td class="py-4 px-4 border-b text-xs text-slate-600">文武両道の象徴。学力検査も高得点が必須。</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-4 border-b font-bold text-blue-900">柏陽</td>
+                                    <td class="py-4 px-4 border-b text-slate-500">横浜</td>
+                                    <td class="py-4 px-4 border-b text-center"><span class="bg-blue-400 text-white px-2 py-1 rounded font-black">72</span></td>
+                                    <td class="py-4 px-4 border-b text-xs text-slate-600">理数教育に強み。翠嵐・湘南に次ぐ位置。</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-4 border-b font-bold text-blue-900">横浜緑ケ丘</td>
+                                    <td class="py-4 px-4 border-b text-slate-500">横浜</td>
+                                    <td class="py-4 px-4 border-b text-center"><span class="bg-blue-300 text-white px-2 py-1 rounded font-black">71</span></td>
+                                    <td class="py-4 px-4 border-b text-xs text-slate-600">自由な校風だが激戦。高倍率を維持。</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-4 border-b font-bold text-blue-900">厚木 / 川和</td>
+                                    <td class="py-4 px-4 border-b text-slate-500">県央/横浜</td>
+                                    <td class="py-4 px-4 border-b text-center"><span class="bg-slate-400 text-white px-2 py-1 rounded font-black">70</span></td>
+                                    <td class="py-4 px-4 border-b text-xs text-slate-600">地区トップ校。女子人気も非常に高い。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 過去5年のトレンド -->
+                <div class="space-y-6">
+                    <div class="bg-slate-900 rounded-3xl p-8 text-white card-shadow">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-amber-400">
+                             過去5年のトレンド
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="border-l-2 border-amber-400 pl-4">
+                                <p class="text-xs font-bold uppercase text-amber-400 mb-1">2024年〜制度変更</p>
+                                <p class="text-sm">面接の廃止により、当日点と内申点の比重が極めて高く。</p>
+                            </div>
+                            <div class="border-l-2 border-white/20 pl-4">
+                                <p class="text-xs font-bold uppercase text-white/50 mb-1">二極化の加速</p>
+                                <p class="text-sm">上位校（翠嵐・湘南）への志願者集中がさらに顕著に。</p>
+                            </div>
+                            <div class="border-l-2 border-white/20 pl-4">
+                                <p class="text-xs font-bold uppercase text-white/50 mb-1">思考力・読解力</p>
+                                <p class="text-sm">全科目で長文化。情報を素早く整理する能力が必須。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 過去問演習セクション -->
+        <section id="practice" class="py-12 scroll-mt-20">
+            <div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
+                <h2 class="text-3xl font-black mb-2 uppercase">Past Exam Challenge</h2>
+                <p class="text-gray-500 mb-8 italic text-sm tracking-widest uppercase">実践：過去問に挑戦する</p>
+
+                <div class="flex space-x-2 mb-8 overflow-x-auto pb-2">
+                    <button onclick="showTab('math-tab')" class="tab-btn px-6 py-2 rounded-full bg-blue-900 text-white font-bold text-sm transition shrink-0">数学 (問2)</button>
+                    <button onclick="showTab('eng-tab')" class="tab-btn px-6 py-2 rounded-full bg-gray-100 text-gray-600 font-bold text-sm hover:bg-gray-200 transition shrink-0">英語 (語彙)</button>
+                </div>
+
+                <div id="math-tab" class="tab-content active">
+                    <div class="p-6 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                        <p class="font-bold mb-4">【数学】問2(ウ) 二次方程式の計算</p>
+                        <p class="text-xl mb-6">二次方程式 $x^2 + 5x + 3 = 0$ を解きなさい。</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button onclick="checkAnswer(this, false)" class="text-left p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 transition">$x = \frac{5 \pm \sqrt{13}}{2}$</button>
+                            <button onclick="checkAnswer(this, true)" class="text-left p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 transition">$x = \frac{-5 \pm \sqrt{13}}{2}$</button>
+                            <button onclick="checkAnswer(this, false)" class="text-left p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 transition">$x = \frac{-5 \pm \sqrt{37}}{2}$</button>
+                        </div>
+                        <div class="mt-6 hidden feedback p-4 rounded-lg bg-emerald-100 text-emerald-800 text-sm font-bold">
+                            正解！解の公式 $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$ を正確に使いましょう。
+                        </div>
+                    </div>
+                </div>
+
+                <div id="eng-tab" class="tab-content">
+                    <div class="p-6 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                        <p class="font-bold mb-4">【英語】語彙力の確認</p>
+                        <p class="text-xl mb-6">「私は将来、海外で働きたいと思っています。」<br>I want to ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) abroad in the future.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button onclick="checkAnswer(this, true)" class="text-left p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 transition">work</button>
+                            <button onclick="checkAnswer(this, false)" class="text-left p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 transition">walk</button>
+                        </div>
+                        <div class="mt-6 hidden feedback p-4 rounded-lg bg-emerald-100 text-emerald-800 text-sm font-bold">
+                            正解！abroad（海外で）と共に使われる動詞を確認しましょう。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-16 px-6 text-center">
+        <div class="max-w-6xl mx-auto uppercase tracking-[.4em] text-[10px] mb-4">Kanagawa Exam Strategy 2025</div>
+        <p class="text-xs">&copy; 2025 Kanagawa Exam Prep Lab.</p>
+    </footer>
+
+    <!-- 数学記号用MathJax -->
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+        // カウントダウン機能
+        const targetDate = new Date('February 14, 2025 09:00:00').getTime();
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minsEl = document.getElementById('minutes');
+            if (distance < 0) return;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            if (daysEl) daysEl.innerText = days;
+            if (hoursEl) hoursEl.innerText = String(hours).padStart(2, '0');
+            if (minsEl) minsEl.innerText = String(minutes).padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // モーダル制御
+        const modal = document.getElementById('downloadModal');
+        const confirmBtn = document.getElementById('confirmDownloadBtn');
+        function openDownloadModal(url) {
+            modal.classList.remove('hidden');
+            confirmBtn.onclick = function() {
+                window.location.href = url;
+                closeDownloadModal();
+            };
+        }
+        function closeDownloadModal() {
+            modal.classList.add('hidden');
+        }
+
+        // タブ切り替え
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-900', 'text-white');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            });
+            event.currentTarget.classList.remove('bg-gray-100', 'text-gray-600');
+            event.currentTarget.classList.add('bg-blue-900', 'text-white');
+        }
+
+        // クイズ判定
+        function checkAnswer(btn, isCorrect) {
+            const container = btn.closest('.tab-content');
+            const feedback = container.querySelector('.feedback');
+            container.querySelectorAll('button').forEach(b => b.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-red-500', 'bg-red-50'));
+            if (isCorrect) {
+                btn.classList.add('border-emerald-500', 'bg-emerald-50');
+                feedback.classList.remove('hidden', 'bg-red-100', 'text-red-800');
+                feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+            } else {
+                btn.classList.add('border-red-500', 'bg-red-50');
+                feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800');
+                feedback.classList.add('bg-red-100', 'text-red-800');
+                feedback.innerText = "残念！ 解法をもう一度見直してみましょう。";
+            }
+        }
+    </script>
+</body>
+</html>
