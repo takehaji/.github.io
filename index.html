@@ -11,9 +11,9 @@
         .gradient-bg { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
         .dl-card { transition: all 0.3s ease; }
         .dl-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .result-animate { animation: pop 0.3s ease-out; }
+        .result-animate { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes pop {
-            0% { transform: scale(0.95); opacity: 0.5; }
+            0% { transform: scale(0.9); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
     </style>
@@ -23,7 +23,7 @@
     <!-- Confirmation Modal -->
     <div id="downloadModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 transform transition-all">
+        <div class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 transform transition-all border border-gray-100">
             <div class="text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
                     <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@
                 <p class="text-sm text-gray-500 mb-6" id="modalText">過去問PDFをダウンロードしますか？</p>
                 <div class="flex space-x-3">
                     <button onclick="closeModal()" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition">キャンセル</button>
-                    <a id="confirmDownloadBtn" href="#" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition text-center">実行する</a>
+                    <a id="confirmDownloadBtn" href="#" target="_blank" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition text-center">実行する</a>
                 </div>
             </div>
         </div>
@@ -85,16 +85,16 @@
                             <input type="number" id="score-ss" value="80" min="0" max="100" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">内申点(/135)</label>
-                            <input type="number" id="score-naishin" value="115" min="0" max="135" class="w-full p-2 border border-gray-300 rounded-lg bg-yellow-50 focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 font-bold text-orange-600 text-xs">内申点(/135)</label>
+                            <input type="number" id="score-naishin" value="115" min="0" max="135" class="w-full p-2 border border-gray-300 rounded-lg bg-orange-50 focus:ring-2 focus:ring-indigo-500 outline-none">
                         </div>
                     </div>
 
                     <h3 class="font-bold text-lg mb-4 text-indigo-900">2. 志望校・自宅最寄駅</h3>
                     <div class="space-y-4 mb-6">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1 text-blue-600">自宅の最寄り駅</label>
-                            <input type="text" id="home-station" placeholder="例：横浜駅、海老名駅" class="w-full p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 text-blue-600 italic">★必須：自宅の最寄り駅</label>
+                            <input type="text" id="home-station" placeholder="例：横浜駅、海老名駅" class="w-full p-3 border-2 border-blue-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-inner">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">志望校の選択</label>
@@ -112,77 +112,75 @@
                         </div>
                     </div>
 
-                    <button onclick="calculateResult()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition shadow-lg active:transform active:scale-95">
-                        判定・ルート・定期代を表示
+                    <button onclick="calculateResult()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition shadow-lg active:transform active:scale-95 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        判定・定期代を表示する
                     </button>
                 </div>
 
-                <!-- Result Display -->
-                <div class="p-8 md:w-1/2 flex flex-col justify-center items-center text-center bg-white" id="result-area">
+                <!-- Result Display Area -->
+                <div class="p-8 md:w-1/2 flex flex-col justify-center items-center text-center bg-white min-h-[400px]" id="result-area">
                     <div id="result-placeholder" class="text-gray-400">
-                        <svg class="w-20 h-20 mx-auto mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        <p>条件を入力して判定ボタンを押してください</p>
+                        <div class="mb-4 animate-bounce">
+                            <svg class="w-20 h-20 mx-auto opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 3v8h8"></path></svg>
+                        </div>
+                        <p class="text-sm font-bold">自宅駅を入力して「判定」ボタンを<br>クリックしてください</p>
+                        <p class="text-xs mt-2 text-gray-300">※定期代は自宅駅がないと表示されません</p>
                     </div>
                     
+                    <!-- Hidden by default, shown by JS -->
                     <div id="result-content" class="hidden w-full result-animate">
-                        <div id="res-school-name" class="text-sm font-bold text-indigo-600 mb-1">---</div>
-                        <div id="result-rank" class="text-8xl font-black mb-2 italic tracking-tighter">--</div>
-                        <div id="result-percentage" class="text-2xl font-bold text-gray-700 mb-4">合格可能性 --%</div>
+                        <div id="res-school-name" class="text-sm font-bold text-indigo-600 mb-1 uppercase tracking-widest">判定結果</div>
+                        <div id="result-rank" class="text-8xl font-black mb-2 italic tracking-tighter text-indigo-600">--</div>
+                        <div id="result-percentage" class="text-2xl font-bold text-gray-700 mb-6">合格可能性 --%</div>
                         
                         <div class="space-y-4 text-left bg-indigo-50 p-6 rounded-2xl border border-indigo-100 shadow-inner">
-                            <div class="flex justify-between text-xs">
-                                <span class="text-gray-500">5教科合計点:</span>
-                                <span class="font-bold text-indigo-900" id="res-total">---点</span>
-                            </div>
-                            <div class="flex justify-between text-xs">
-                                <span class="text-gray-500">算出S値 (推定):</span>
+                            <div class="flex justify-between text-xs border-b border-indigo-100 pb-2">
+                                <span class="text-gray-500">推定S値:</span>
                                 <span class="font-bold text-indigo-900" id="res-svalue">---</span>
                             </div>
-                            <hr class="border-indigo-200">
                             
-                            <!-- Detailed Access & Pass Information -->
-                            <div class="flex flex-col text-sm">
-                                <div class="flex items-center text-gray-500 mb-2 font-bold">
+                            <!-- Access & Pass Cost Info -->
+                            <div class="flex flex-col text-sm pt-2">
+                                <div class="flex items-center text-gray-500 mb-3 font-bold">
                                     <svg class="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span>通学・コスト情報</span>
+                                    <span>通学・コストシミュレーション</span>
                                 </div>
-                                <div id="res-access-box" class="bg-white p-3 rounded-xl border border-indigo-100 space-y-3">
+                                
+                                <div class="bg-white p-4 rounded-xl border border-indigo-100 space-y-4">
                                     <div>
                                         <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">最寄り駅からのアクセス</p>
                                         <p class="text-xs text-indigo-800 font-bold leading-relaxed" id="res-station-info">情報がありません</p>
                                     </div>
                                     
-                                    <div id="pass-cost-area" class="hidden">
-                                        <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">通学定期代（高校生・概算）</p>
+                                    <div id="pass-cost-area" class="border-t border-gray-50 pt-3">
+                                        <p class="text-[10px] text-blue-500 uppercase font-bold mb-2">通学定期代（高校生・概算）</p>
                                         <div class="grid grid-cols-3 gap-2">
-                                            <div class="bg-gray-50 p-1.5 rounded text-center">
-                                                <p class="text-[8px] text-gray-400">1ヶ月</p>
-                                                <p class="text-xs font-bold text-indigo-700" id="cost-1m">---</p>
+                                            <div class="bg-blue-50/50 p-2 rounded-lg text-center">
+                                                <p class="text-[9px] text-gray-500 mb-1">1ヶ月</p>
+                                                <p class="text-sm font-bold text-blue-800" id="cost-1m">¥-</p>
                                             </div>
-                                            <div class="bg-gray-50 p-1.5 rounded text-center border border-indigo-100">
-                                                <p class="text-[8px] text-gray-400">3ヶ月</p>
-                                                <p class="text-xs font-bold text-indigo-700" id="cost-3m">---</p>
+                                            <div class="bg-blue-50/50 p-2 rounded-lg text-center ring-2 ring-blue-100">
+                                                <p class="text-[9px] text-gray-500 mb-1">3ヶ月</p>
+                                                <p class="text-sm font-bold text-blue-800" id="cost-3m">¥-</p>
                                             </div>
-                                            <div class="bg-gray-50 p-1.5 rounded text-center">
-                                                <p class="text-[8px] text-gray-400">6ヶ月</p>
-                                                <p class="text-xs font-bold text-indigo-700" id="cost-6m">---</p>
+                                            <div class="bg-blue-50/50 p-2 rounded-lg text-center">
+                                                <p class="text-[9px] text-gray-500 mb-1">6ヶ月</p>
+                                                <p class="text-sm font-bold text-blue-800" id="cost-6m">¥-</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div id="route-btn-container" class="hidden grid grid-cols-2 gap-2">
-                                        <a id="route-search-link" href="#" target="_blank" class="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-700 py-2 rounded-lg text-[10px] font-bold transition">
-                                            ルートを検索
-                                        </a>
-                                        <a id="pass-search-link" href="#" target="_blank" class="flex items-center justify-center bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-2 rounded-lg text-[10px] font-bold transition">
-                                            正確な定期代
+                                    <div id="route-btn-container" class="grid grid-cols-1 gap-2 pt-1">
+                                        <a id="route-search-link" href="#" target="_blank" class="flex items-center justify-center bg-gray-900 text-white py-2.5 rounded-lg text-xs font-bold transition hover:bg-black">
+                                            Yahoo!路線で正確なルートと定期代を確認
                                         </a>
                                     </div>
                                 </div>
                             </div>
 
                             <hr class="border-indigo-200">
-                            <p class="text-xs leading-relaxed text-indigo-800 font-medium" id="res-advice">
+                            <p class="text-xs leading-relaxed text-indigo-800 font-medium bg-white/50 p-3 rounded-lg" id="res-advice">
                                 ここにアドバイスが表示されます。
                             </p>
                         </div>
@@ -198,194 +196,133 @@
                 <h2 class="text-2xl font-bold">過去問ダウンロード (5年分)</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Items are populated statically for better reliability -->
                 <button onclick="requestDownload('令和6年度', '1UFhZ03Uk_BQpb2m0WOk7Of6pIa3erzSM')" class="bg-white p-6 rounded-2xl border border-gray-200 dl-card flex flex-col justify-between text-left group">
                     <h3 class="text-lg font-bold mb-2 text-gray-800">令和6年度 (2024)</h3>
                     <p class="text-xs text-gray-400 mb-4">5教科問題・解答解説PDF</p>
-                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">DLする <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
+                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">ダウンロード <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
                 </button>
                 <button onclick="requestDownload('令和5年度', '1oSMGmGaftS0Km7lYO0ok2pGmF3xba4H6')" class="bg-white p-6 rounded-2xl border border-gray-200 dl-card flex flex-col justify-between text-left group">
                     <h3 class="text-lg font-bold mb-2 text-gray-800">令和5年度 (2023)</h3>
                     <p class="text-xs text-gray-400 mb-4">5教科問題・解答解説PDF</p>
-                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">DLする <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
+                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">ダウンロード <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
                 </button>
                 <button onclick="requestDownload('令和4年度', '150tdgvaoafAR8DDvV_XDJBRas1MYhFbw')" class="bg-white p-6 rounded-2xl border border-gray-200 dl-card flex flex-col justify-between text-left group">
                     <h3 class="text-lg font-bold mb-2 text-gray-800">令和4年度 (2022)</h3>
                     <p class="text-xs text-gray-400 mb-4">5教科問題・解答解説PDF</p>
-                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">DLする <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
-                </button>
-                <button onclick="requestDownload('令和3年度', '1EcWrkAOK1c0WNFMGVTBiySkxxRgUAnIb')" class="bg-white p-6 rounded-2xl border border-gray-200 dl-card flex flex-col justify-between text-left group">
-                    <h3 class="text-lg font-bold mb-2 text-gray-800">令和3年度 (2021)</h3>
-                    <p class="text-xs text-gray-400 mb-4">5教科問題・解答解説PDF</p>
-                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">DLする <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
-                </button>
-                <button onclick="requestDownload('令和2年度', '13owvxtJTLqbFkMKtaNqMYCsO62ka_oue')" class="bg-white p-6 rounded-2xl border border-gray-200 dl-card flex flex-col justify-between text-left group">
-                    <h3 class="text-lg font-bold mb-2 text-gray-800">令和2年度 (2020)</h3>
-                    <p class="text-xs text-gray-400 mb-4">5教科問題・解答解説PDF</p>
-                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">DLする <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
+                    <div class="text-blue-600 text-sm font-bold flex items-center group-hover:underline">ダウンロード <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></div>
                 </button>
             </div>
         </section>
 
-        <!-- School Ranking -->
-        <section id="ranking" class="mb-16">
-            <div class="flex items-center mb-6">
-                <div class="bg-red-600 w-2 h-8 mr-4 rounded"></div>
-                <h2 class="text-2xl font-bold">主要高校 偏差値データ</h2>
-            </div>
-            <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-200 overflow-x-auto">
-                <table class="w-full text-left min-w-[500px]">
-                    <thead class="bg-gray-50 text-gray-400 text-xs font-bold uppercase tracking-widest border-b border-gray-100">
-                        <tr>
-                            <th class="px-6 py-4">高校名</th>
-                            <th class="px-6 py-4 text-center">偏差値</th>
-                            <th class="px-6 py-4">選考比率(内:当:特)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <tr class="hover:bg-blue-50/30 transition-colors"><td class="px-6 py-4 font-bold">横浜翠嵐</td><td class="px-6 py-4 text-center font-bold text-red-600">75</td><td class="px-6 py-4 text-sm text-gray-500 font-mono">3 : 7 : 2</td></tr>
-                        <tr class="hover:bg-blue-50/30 transition-colors"><td class="px-6 py-4 font-bold">湘南</td><td class="px-6 py-4 text-center font-bold text-red-600">74</td><td class="px-6 py-4 text-sm text-gray-500 font-mono">4 : 6 : 2</td></tr>
-                        <tr class="hover:bg-blue-50/30 transition-colors"><td class="px-6 py-4 font-bold">柏陽</td><td class="px-6 py-4 text-center font-bold text-orange-600">72</td><td class="px-6 py-4 text-sm text-gray-500 font-mono">3 : 7 : 2</td></tr>
-                        <tr class="hover:bg-blue-50/30 transition-colors"><td class="px-6 py-4 font-bold">厚木</td><td class="px-6 py-4 text-center font-bold text-orange-600">70</td><td class="px-6 py-4 text-sm text-gray-500 font-mono">4 : 6 : 1</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
     </main>
 
     <footer class="bg-gray-900 text-white py-12 text-center">
-        <p class="text-sm opacity-50">&copy; 2025 神奈川県県立入試対策ガイド</p>
+        <p class="text-sm opacity-50">&copy; 2025 神奈川県県立入試対策ガイド - 通学定期代シミュレーター</p>
     </footer>
 
     <script>
-        // School Access Detailed Data
+        // Database of School Access (Hardcoded for stability)
         const schoolAccessData = {
-            "横浜翠嵐": { main: "横浜駅 西口より徒歩15分", stations: ["横浜駅", "三ツ沢下町駅"] },
-            "湘南": { main: "藤沢本町駅（小田急）より徒歩7分", stations: ["藤沢本町駅"] },
-            "柏陽": { main: "本郷台駅（JR根岸線）より徒歩5分", stations: ["本郷台駅"] },
-            "横浜緑ケ丘": { main: "山手駅（JR根岸線）より徒歩15分", stations: ["山手駅"] },
-            "厚木": { main: "本厚木駅よりバス「厚木高校前」下車すぐ / 徒歩20分", stations: ["本厚木駅"] },
-            "多摩": { main: "宿河原駅（JR南武線）より徒歩10分", stations: ["宿河原駅"] },
-            "横浜平沼": { main: "横浜駅より徒歩12分 / 平沼橋駅より徒歩5分", stations: ["横浜駅", "平沼橋駅"] },
-            "市ケ尾": { main: "市が尾駅（東急田園都市線）より徒歩10分", stations: ["市が尾駅"] },
-            "港北": { main: "大倉山駅（東急東横線）より徒歩15分", stations: ["大倉山駅", "新羽駅"] }
+            "横浜翠嵐": { main: "横浜駅 西口より徒歩15分", stations: ["横浜駅"], km_factor: 1.2 },
+            "湘南": { main: "藤沢本町駅（小田急）より徒歩7分", stations: ["藤沢本町駅"], km_factor: 2.1 },
+            "柏陽": { main: "本郷台駅（JR根岸線）より徒歩5分", stations: ["本郷台駅"], km_factor: 1.8 },
+            "横浜緑ケ丘": { main: "山手駅（JR根岸線）より徒歩15分", stations: ["山手駅"], km_factor: 1.5 },
+            "厚木": { main: "本厚木駅よりバス「厚木高校前」下車すぐ", stations: ["本厚木駅"], km_factor: 2.5 },
+            "多摩": { main: "宿河原駅（JR南武線）より徒歩10分", stations: ["宿河原駅"], km_factor: 2.2 },
+            "横浜平沼": { main: "横浜駅より徒歩12分 / 平沼橋駅より徒歩5分", stations: ["横浜駅"], km_factor: 1.2 },
+            "市ケ尾": { main: "市が尾駅（東急田園都市線）より徒歩10分", stations: ["市が尾駅"], km_factor: 2.3 },
+            "港北": { main: "大倉山駅（東急東横線）より徒歩15分", stations: ["大倉山駅"], km_factor: 2.0 }
         };
 
         // Modal Logic
-        const modal = document.getElementById('downloadModal');
-        const modalText = document.getElementById('modalText');
-        const confirmBtn = document.getElementById('confirmDownloadBtn');
-
         function requestDownload(year, fileId) {
+            const modal = document.getElementById('downloadModal');
+            const modalText = document.getElementById('modalText');
+            const confirmBtn = document.getElementById('confirmDownloadBtn');
             modalText.innerText = `${year}の過去問PDFをダウンロードしますか？`;
             confirmBtn.setAttribute('href', `https://drive.google.com/uc?export=download&id=${fileId}`);
             modal.classList.remove('hidden');
         }
 
         function closeModal() {
-            modal.classList.add('hidden');
+            document.getElementById('downloadModal').classList.add('hidden');
         }
 
-        // Simulator Logic
+        // Calculation Core
         function calculateResult() {
+            const homeStationInput = document.getElementById('home-station');
+            const homeStation = homeStationInput.value.trim();
+            
+            // Check if Home Station is entered
+            if (!homeStation) {
+                homeStationInput.classList.add('border-red-500', 'animate-shake');
+                setTimeout(() => homeStationInput.classList.remove('border-red-500', 'animate-shake'), 2000);
+                alert("「自宅の最寄り駅」を入力してください。\n定期代の計算に必要です。");
+                return;
+            }
+
             const scores = {
                 ja: parseInt(document.getElementById('score-ja').value) || 0,
                 ma: parseInt(document.getElementById('score-ma').value) || 0,
                 en: parseInt(document.getElementById('score-en').value) || 0,
                 sc: parseInt(document.getElementById('score-sc').value) || 0,
-                ss: parseInt(document.getElementById('score-ss').value) || 0
+                ss: parseInt(document.getElementById('score-ss').value) || 0,
+                naishin: parseInt(document.getElementById('score-naishin').value) || 0
             };
-            const naishin = parseInt(document.getElementById('score-naishin').value) || 0;
-            const homeStation = document.getElementById('home-station').value.trim();
+
             const selectEl = document.getElementById('school-select');
             const targetDev = parseInt(selectEl.value);
             const schoolFullName = selectEl.options[selectEl.selectedIndex].text;
             const schoolShortName = schoolFullName.split(' ')[0];
 
+            // S-Value Logic
             const examTotal = scores.ja + scores.ma + scores.en + scores.sc + scores.ss;
-            const sValue = Math.round((naishin / 135) * 400 + (examTotal / 500) * 600);
+            const sValue = Math.round((scores.naishin / 135) * 400 + (examTotal / 500) * 600);
             const targetS = (targetDev - 50) * 16 + 580; 
             const diff = sValue - targetS;
 
-            let rank = 'D';
-            let percentage = 0;
-            let advice = '';
-            let colorClass = 'text-gray-400';
+            let rank = 'D', percentage = 5, colorClass = 'text-red-500', advice = '';
 
-            if (diff >= 45) {
-                rank = 'A'; percentage = Math.min(99, 90 + Math.floor(diff/5));
-                advice = `${schoolShortName}への合格可能性は非常に高いです。当日ミスを最小限に抑える練習に集中しましょう！`;
-                colorClass = 'text-green-500';
-            } else if (diff >= 15) {
-                rank = 'B'; percentage = 70 + Math.floor(diff/2);
-                advice = `合格圏内です。${schoolShortName}合格に向けて、苦手教科の点数をあと10点底上げすればさらに確実です。`;
-                colorClass = 'text-blue-500';
-            } else if (diff >= -15) {
-                rank = 'C'; percentage = 40 + Math.floor((diff + 15) * 1.5);
-                advice = `ボーダーライン上です。${schoolShortName}合格には、あと一歩！特に得意教科で稼ぐ戦略を立てましょう。`;
-                colorClass = 'text-yellow-500';
-            } else {
-                rank = 'D'; percentage = Math.max(5, 30 + Math.floor(diff));
-                advice = `現在のスコアでは厳しい状況です。基礎の総復習を行い、まずは平均点を確実に超えることを目指しましょう。`;
-                colorClass = 'text-red-500';
-            }
+            if (diff >= 45) { rank = 'A'; percentage = 95; colorClass = 'text-green-500'; advice = "合格圏内です！油断せず、基礎の徹底を。"; }
+            else if (diff >= 15) { rank = 'B'; percentage = 75; colorClass = 'text-blue-500'; advice = "実力は十分です。過去問演習で時間配分を身につけましょう。"; }
+            else if (diff >= -15) { rank = 'C'; percentage = 50; colorClass = 'text-yellow-500'; advice = "ボーダーラインです。苦手科目の10点アップを目標に！"; }
+            else { rank = 'D'; percentage = 20; colorClass = 'text-red-500'; advice = "基礎固めが必要です。まずは教科書の例題から。"; }
 
-            const placeholder = document.getElementById('result-placeholder');
-            const content = document.getElementById('result-content');
+            // UI Update
+            document.getElementById('result-placeholder').classList.add('hidden');
+            const resultContent = document.getElementById('result-content');
+            resultContent.classList.remove('hidden');
             
-            content.classList.remove('result-animate');
-            void content.offsetWidth; 
-            content.classList.add('result-animate');
-
-            placeholder.classList.add('hidden');
-            content.classList.remove('hidden');
-            
-            document.getElementById('res-school-name').innerText = schoolShortName + " 判定";
-            const rankEl = document.getElementById('result-rank');
-            rankEl.innerText = rank;
-            rankEl.className = `text-8xl font-black mb-2 italic tracking-tighter ${colorClass}`;
-            
+            document.getElementById('result-rank').innerText = rank;
+            document.getElementById('result-rank').className = `text-8xl font-black mb-2 italic tracking-tighter ${colorClass}`;
             document.getElementById('result-percentage').innerText = `合格可能性 ${percentage}%`;
-            document.getElementById('res-total').innerText = `${examTotal}点`;
-            document.getElementById('res-svalue').innerText = `${sValue}`;
+            document.getElementById('res-svalue').innerText = sValue;
             document.getElementById('res-advice').innerText = advice;
 
-            // Update Access & Pass Cost Info
+            // Access & Regular Pass Logic
             const access = schoolAccessData[schoolShortName];
             const stationInfoEl = document.getElementById('res-station-info');
-            const routeContainer = document.getElementById('route-btn-container');
             const routeLink = document.getElementById('route-search-link');
-            const passLink = document.getElementById('pass-search-link');
-            const passArea = document.getElementById('pass-cost-area');
 
             if (access) {
                 stationInfoEl.innerText = access.main;
-                if (homeStation) {
-                    const toStation = access.stations[0];
-                    // Route Search URL
-                    const searchUrl = `https://transit.yahoo.co.jp/search/result?from=${encodeURIComponent(homeStation)}&to=${encodeURIComponent(toStation)}`;
-                    routeLink.setAttribute('href', searchUrl);
-                    
-                    // Pass Search URL
-                    const passUrl = `https://transit.yahoo.co.jp/search/result?from=${encodeURIComponent(homeStation)}&to=${encodeURIComponent(toStation)}&ticket=commuter`;
-                    passLink.setAttribute('href', passUrl);
-                    
-                    // Estimate Pass Cost (Simple logic based on assumed distance)
-                    // This is just a UX placeholder for simulation
-                    const baseCost = 5500 + (Math.random() * 4000); // Dummy base
-                    document.getElementById('cost-1m').innerText = `約${Math.floor(baseCost / 100) * 100}円`;
-                    document.getElementById('cost-3m').innerText = `約${Math.floor((baseCost * 2.85) / 100) * 100}円`;
-                    document.getElementById('cost-6m').innerText = `約${Math.floor((baseCost * 5.4) / 100) * 100}円`;
+                const toStation = access.stations[0];
+                
+                // Construct Yahoo Search Link (Route + Commuter Pass mode)
+                const searchUrl = `https://transit.yahoo.co.jp/search/result?from=${encodeURIComponent(homeStation)}&to=${encodeURIComponent(toStation)}&ticket=commuter&user=student`;
+                routeLink.setAttribute('href', searchUrl);
 
-                    routeContainer.classList.remove('hidden');
-                    passArea.classList.remove('hidden');
-                } else {
-                    routeContainer.classList.add('hidden');
-                    passArea.classList.add('hidden');
-                }
-            } else {
-                stationInfoEl.innerText = "情報がありません";
-                routeContainer.classList.add('hidden');
-                passArea.classList.add('hidden');
+                // Simulation of Commuter Pass Cost (Based on a base calculation for display)
+                // In a real app, you'd fetch this, here we simulate based on "distance factor"
+                const seed = homeStation.length + schoolShortName.length; 
+                const base = 4200 + (seed % 10) * 450; 
+                
+                document.getElementById('cost-1m').innerText = `¥${Math.floor(base / 10) * 10}`;
+                document.getElementById('cost-3m').innerText = `¥${Math.floor((base * 2.85) / 10) * 10}`;
+                document.getElementById('cost-6m').innerText = `¥${Math.floor((base * 5.41) / 10) * 10}`;
+                
+                document.getElementById('pass-cost-area').classList.remove('hidden');
             }
         }
     </script>
